@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>BookingDialog</class>
+ <widget class="QDialog" name="BookingDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Book Ticket</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QFormLayout" name="formLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="sourceLabel">
+       <property name="text">
+        <string>Source:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QComboBox" name="sourceCombo"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="destLabel">
+       <property name="text">
+        <string>Destination:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QComboBox" name="destCombo"/>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="dateLabel">
+       <property name="text">
+        <string>Date:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QDateEdit" name="dateEdit"/>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="seatLabel">
+       <property name="text">
+        <string>Seat:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QSpinBox" name="seatSpinBox"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QPushButton" name="bookButton">
+     <property name="text">
+      <string>Book</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+</ui>
