@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-#include "bookingdialog.h"
+#include "welcomescreendialog.h"
 #include "ui_mainwindow.h"
 
 #include <QMessageBox>
@@ -72,7 +72,7 @@ void MainWindow::onLoginButtonClicked()
     }
 
     if (validateCredentials(username, password)) {
-        BookingDialog dialog(this);
+        WelcomeScreenDialog dialog(this);
         dialog.exec();
         
         this->close();

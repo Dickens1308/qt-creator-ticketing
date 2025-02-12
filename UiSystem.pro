@@ -10,19 +10,25 @@ CONFIG += c++17
 
 SOURCES += \
     bookingdialog.cpp \
+    historydialog.cpp \
     main.cpp \
     mainwindow.cpp \
-    ticketdialog.cpp
+    ticketdialog.cpp \
+    welcomescreendialog.cpp
 
 HEADERS += \
     bookingdialog.h \
+    historydialog.h \
     mainwindow.h \
-    ticketdialog.h
+    ticketdialog.h \
+    welcomescreendialog.h
 
 FORMS += \
     bookingdialog.ui \
+    historydialog.ui \
     mainwindow.ui \
-    ticketdialog.ui
+    ticketdialog.ui \
+    welcomescreendialog.ui
 
 TRANSLATIONS += \
     UiSystem_en_TZ.ts
