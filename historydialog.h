@@ -2,6 +2,7 @@
 #define HISTORYDIALOG_H
 
 #include <QDialog>
+#include <QSqlDatabase>
 
 namespace Ui {
 class HistoryDialog;
@@ -18,11 +19,13 @@ public:
 private slots:
     void loadHistory();
     void onPrintClicked();
+    void onRefreshClicked();
     void onCloseClicked();
+    void onDeleteAllClicked();
 
 private:
     Ui::HistoryDialog *ui;
     void setupTable();
 };
 
-#endif // HISTORYDIALOG_H
+#endif

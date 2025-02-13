@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,44 +17,98 @@
    <item>
     <layout class="QFormLayout" name="formLayout">
      <item row="0" column="0">
+      <widget class="QLabel" name="nameLabel">
+       <property name="text">
+        <string>Passenger Name:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="nameInput"/>
+     </item>
+     <item row="1" column="0">
       <widget class="QLabel" name="sourceLabel">
        <property name="text">
         <string>Source:</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
+     <item row="1" column="1">
       <widget class="QComboBox" name="sourceCombo"/>
      </item>
-     <item row="1" column="0">
+     <item row="2" column="0">
       <widget class="QLabel" name="destLabel">
        <property name="text">
         <string>Destination:</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
+     <item row="2" column="1">
       <widget class="QComboBox" name="destCombo"/>
      </item>
-     <item row="2" column="0">
+     <item row="3" column="0">
       <widget class="QLabel" name="dateLabel">
        <property name="text">
         <string>Date:</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
+     <item row="3" column="1">
       <widget class="QDateEdit" name="dateEdit"/>
      </item>
-     <item row="3" column="0">
+     <item row="4" column="0">
       <widget class="QLabel" name="seatLabel">
        <property name="text">
         <string>Seat:</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
-      <widget class="QSpinBox" name="seatSpinBox"/>
+     <item row="4" column="1">
+      <widget class="QComboBox" name="seatCombo"/>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="distanceLabel">
+       <property name="text">
+        <string>Distance:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QLabel" name="distanceValue"/>
+     </item>
+     <item row="6" column="0">
+      <widget class="QLabel" name="fareLabel">
+       <property name="text">
+        <string>Fare:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <widget class="QLabel" name="fareValue"/>
+     </item>
+     <item row="7" column="0">
+      <widget class="QLabel" name="discountLabel">
+       <property name="text">
+        <string>Discount (%):</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="1">
+      <widget class="QSpinBox" name="discountSpin">
+       <property name="maximum">
+        <number>100</number>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="0">
+      <widget class="QLabel" name="totalFareLabel">
+       <property name="text">
+        <string>Total Fare:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="1">
+      <widget class="QLabel" name="totalFareValue"/>
      </item>
     </layout>
    </item>

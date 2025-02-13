@@ -1,36 +1,33 @@
 #include "bookingdialog.h"
 #include "ui_bookingdialog.h"
 #include "ticketdialog.h"
-
 #include <QMessageBox>
 #include <QSqlQuery>
 #include <QSqlError>
 
 BookingDialog::BookingDialog(QWidget *parent)
-    : QDialog(parent), ui(new Ui::BookingDialog)
+    : QDialog(parent)
+    , ui(new Ui::BookingDialog)
 {
     ui->setupUi(this);
-
-    // Load locations into comboboxes
     loadLocations();
-
-    // Set date constraints
     ui->dateEdit->setMinimumDate(QDate::currentDate());
+    setupConnections();
+    calculateFare();
+}
 
-    // Connect signals
+void BookingDialog::setupConnections()
+{
     connect(ui->bookButton, &QPushButton::clicked,
             this, &BookingDialog::onBookButtonClicked);
     connect(ui->sourceCombo, &QComboBox::currentTextChanged,
-            this, &BookingDialog::updateAvailableSeats);
+            this, &BookingDialog::onSourceChanged);
     connect(ui->destCombo, &QComboBox::currentTextChanged,
-            this, &BookingDialog::updateAvailableSeats);
+            this, &BookingDialog::onDestinationChanged);
     connect(ui->dateEdit, &QDateEdit::dateChanged,
-            this, &BookingDialog::updateAvailableSeats);
-}
-
-BookingDialog::~BookingDialog()
-{
-    delete ui;
+            this, &BookingDialog::onDateChanged);
+    connect(ui->discountSpin, QOverload<int>::of(&QSpinBox::valueChanged),
+            this, &BookingDialog::onDiscountChanged);
 }
 
 void BookingDialog::loadLocations()
@@ -40,60 +37,149 @@ void BookingDialog::loadLocations()
     ui->destCombo->addItems(locations);
 }
 
-bool BookingDialog::saveBooking()
+int BookingDialog::getDistance(const QString &source, const QString &dest) const
 {
-    if (!validateForm()) return false;
+    if((source == "City A" && dest == "City B") || 
+       (source == "City B" && dest == "City A"))
+        return 1000;
+    if((source == "City A" && dest == "City C") || 
+       (source == "City C" && dest == "City A"))
+        return 1500;
+    if((source == "City B" && dest == "City C") || 
+       (source == "City C" && dest == "City B"))
+        return 800;
+    return 0;
+}
 
-    QSqlQuery query;
-    query.prepare("INSERT INTO bookings (source, destination, date, seat_no) "
-                 "VALUES (:source, :dest, :date, :seat)");
-    query.bindValue(":source", ui->sourceCombo->currentText());
-    query.bindValue(":dest", ui->destCombo->currentText());
-    query.bindValue(":date", ui->dateEdit->date().toString("yyyy-MM-dd"));
-    query.bindValue(":seat", ui->seatSpinBox->value());
+void BookingDialog::calculateFare()
+{
+    QString source = ui->sourceCombo->currentText();
+    QString dest = ui->destCombo->currentText();
+    int distance = getDistance(source, dest);
+    
+    ui->distanceValue->setText(QString::number(distance) + " km");
+    double fare = 750.0 + (distance / 100.0);
+    ui->fareValue->setText(QString::number(fare, 'f', 2));
+    
+    calculateTotalFare();
+}
 
-    return query.exec();
+void BookingDialog::calculateTotalFare()
+{
+    double fare = ui->fareValue->text().toDouble();
+    int discount = ui->discountSpin->value();
+    double totalFare = fare * (1.0 - (discount / 100.0));
+    ui->totalFareValue->setText(QString::number(totalFare, 'f', 2));
 }
 
 void BookingDialog::updateAvailableSeats()
 {
     QSqlQuery query;
-    query.prepare("SELECT COUNT(*) FROM bookings WHERE "
+    query.prepare("SELECT seat_no FROM bookings WHERE "
                  "source = :source AND destination = :dest "
                  "AND date = :date");
     query.bindValue(":source", ui->sourceCombo->currentText());
     query.bindValue(":dest", ui->destCombo->currentText());
     query.bindValue(":date", ui->dateEdit->date().toString("yyyy-MM-dd"));
     
-    if (query.exec() && query.next()) {
-        int bookedSeats = query.value(0).toInt();
-        ui->seatSpinBox->setRange(1, 50 - bookedSeats);
+    QSet<int> bookedSeats;
+    if (query.exec()) {
+        while(query.next()) {
+            bookedSeats.insert(query.value(0).toInt());
+        }
     }
-}
 
-void BookingDialog::onBookButtonClicked()
-{
-    if (saveBooking()) {
-       // Show ticket dialog with booking details
-        TicketDialog ticketDialog(
-            ui->sourceCombo->currentText(),
-            ui->destCombo->currentText(),
-            ui->dateEdit->date().toString("yyyy-MM-dd"),
-            ui->seatSpinBox->value(),
-            this
-        );
-        ticketDialog.exec();
-        accept();
-    } else {
-        QMessageBox::warning(this, "Error", "Failed to save booking");
+    ui->seatCombo->clear();
+    for(int i = 1; i <= 50; i++) {
+        if(!bookedSeats.contains(i)) {
+            ui->seatCombo->addItem(QString::number(i));
+        }
     }
 }
 
 bool BookingDialog::validateForm() const
 {
+    if (ui->nameInput->text().isEmpty()) {
+        QMessageBox::warning(nullptr, "Error", "Please enter passenger name");
+        return false;
+    }
     if (ui->sourceCombo->currentText() == ui->destCombo->currentText()) {
         QMessageBox::warning(nullptr, "Error", "Source and destination must be different");
         return false;
     }
+    if (ui->seatCombo->currentText().isEmpty()) {
+        QMessageBox::warning(nullptr, "Error", "Please select a seat");
+        return false;
+    }
     return true;
+}
+
+bool BookingDialog::saveBooking()
+{
+    if (!validateForm()) return false;
+
+    QSqlQuery query;
+    query.prepare("INSERT INTO bookings (source, destination, date, passenger_name, "
+                 "seat_no, distance, fare, discount, total_fare) "
+                 "VALUES (:source, :dest, :date, :name, :seat, :distance, "
+                 ":fare, :discount, :total)");
+    
+    query.bindValue(":source", ui->sourceCombo->currentText());
+    query.bindValue(":dest", ui->destCombo->currentText());
+    query.bindValue(":date", ui->dateEdit->date().toString("yyyy-MM-dd"));
+    query.bindValue(":name", ui->nameInput->text());
+    query.bindValue(":seat", ui->seatCombo->currentText().toInt());
+    query.bindValue(":distance", getDistance(ui->sourceCombo->currentText(), 
+                                           ui->destCombo->currentText()));
+    query.bindValue(":fare", ui->fareValue->text().toDouble());
+    query.bindValue(":discount", ui->discountSpin->value());
+    query.bindValue(":total", ui->totalFareValue->text().toDouble());
+
+    return query.exec();
+}
+
+void BookingDialog::onBookButtonClicked()
+{
+    if (saveBooking()) {
+        TicketDialog ticketDialog(
+            ui->sourceCombo->currentText(),
+            ui->destCombo->currentText(),
+            ui->dateEdit->date().toString("yyyy-MM-dd"),
+            ui->seatCombo->currentText().toInt(),
+            getDistance(ui->sourceCombo->currentText(), ui->destCombo->currentText()),
+            ui->fareValue->text().toDouble(),
+            ui->discountSpin->value(),
+            ui->totalFareValue->text().toDouble(),
+            this
+        );
+        ticketDialog.exec();
+        accept();
+    }
+}
+
+void BookingDialog::onSourceChanged()
+{
+    calculateFare();
+    updateAvailableSeats();
+}
+
+void BookingDialog::onDestinationChanged()
+{
+    calculateFare();
+    updateAvailableSeats();
+}
+
+void BookingDialog::onDateChanged()
+{
+    updateAvailableSeats();
+}
+
+void BookingDialog::onDiscountChanged(int)
+{
+    calculateTotalFare();
+}
+
+BookingDialog::~BookingDialog()
+{
+    delete ui;
 }

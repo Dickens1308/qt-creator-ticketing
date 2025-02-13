@@ -2,6 +2,8 @@
 #define BOOKINGDIALOG_H
 
 #include <QDialog>
+#include <QDate>
+#include <QSqlDatabase>
 
 namespace Ui {
 class BookingDialog;
@@ -18,18 +20,25 @@ public:
 private slots:
     void onBookButtonClicked();
     void updateAvailableSeats();
+    void calculateFare();
+    void calculateTotalFare();
+    void onSourceChanged();
+    void onDestinationChanged();
+    void onDateChanged();
+    void onDiscountChanged(int value);
 
 private:
     Ui::BookingDialog *ui;
-        
-    // Database operations
+    void setupConnections();
     void loadLocations();
     bool saveBooking();
-    
-    // Validation methods
     bool validateForm() const;
-    bool isSeatAvailable(int seatNo) const;
-    bool isValidRoute() const;
+    int getDistance(const QString &source, const QString &dest) const;
+    double calculateBaseFare(int distance) const;
+    void showError(const QString &message) const;
+    void clearForm();
+    bool checkSeatAvailability(int seatNo) const;
+    double applyDiscount(double fare, int discountPercent) const;
 };
 
 #endif // BOOKINGDIALOG_H

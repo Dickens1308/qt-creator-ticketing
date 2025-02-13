@@ -3,21 +3,23 @@
 
 #include <QDialog>
 
-namespace Ui
-{
-    class TicketDialog;
-}
+namespace Ui { class TicketDialog; }
 
 class TicketDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit TicketDialog(const QString &source,
-                          const QString &destination,
-                          const QString &date,
-                          int seatNo,
-                          QWidget *parent = nullptr);
+    explicit TicketDialog(
+        const QString &source,
+        const QString &destination,
+        const QString &date,
+        int seatNo,
+        int distance,
+        double fare,
+        double discount,
+        double totalFare,
+        QWidget *parent = nullptr);
     ~TicketDialog();
 
 private slots:
@@ -26,9 +28,6 @@ private slots:
 
 private:
     Ui::TicketDialog *ui;
-    void setupTicketDetails();
-    bool saveTicketToFile();
-    bool printTicket();
 };
 
-#endif // TICKETDIALOG_H
+#endif

@@ -1,6 +1,5 @@
 #include "ticketdialog.h"
 #include "ui_ticketdialog.h"
-
 #include <QPrinter>
 #include <QPrintDialog>
 #include <QPainter>
@@ -12,17 +11,26 @@ TicketDialog::TicketDialog(
     const QString &destination,
     const QString &date,
     int seatNo,
+    int distance,
+    double fare,
+    double discount,
+    double totalFare,
     QWidget *parent)
-    : QDialog(parent), ui(new Ui::TicketDialog)
+    : QDialog(parent)
+    , ui(new Ui::TicketDialog)
 {
     ui->setupUi(this);
-
+    
     // Set ticket details
     ui->sourceValue->setText(source);
     ui->destValue->setText(destination);
     ui->dateValue->setText(date);
     ui->seatValue->setText(QString::number(seatNo));
-
+    ui->distanceValue->setText(QString::number(distance) + " km");
+    ui->fareValue->setText("$" + QString::number(fare, 'f', 2));
+    ui->discountValue->setText(QString::number(discount, 'f', 2) + " %");
+    ui->totalFareValue->setText("$" + QString::number(totalFare, 'f', 2));
+    
     // Connect buttons
     connect(ui->printButton, &QPushButton::clicked,
             this, &TicketDialog::onPrintClicked);

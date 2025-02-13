@@ -36,7 +36,40 @@ MainWindow::MainWindow(QWidget *parent)
               "source TEXT NOT NULL, "
               "destination TEXT NOT NULL, "
               "date TEXT NOT NULL, "
-              "seat_no INTEGER NOT NULL)");          
+              "passenger_name TEXT NOT NULL, "
+              "seat_no INTEGER NOT NULL, "
+              "distance REAL NOT NULL DEFAULT 0.0, "
+              "fare REAL NOT NULL DEFAULT 0.0, "
+              "discount REAL NOT NULL DEFAULT 0.0, "
+              "total_fare REAL NOT NULL DEFAULT 0.0)");
+
+    query.exec("PRAGMA table_info(bookings)");
+    
+    QStringList columns;
+    while (query.next()) {
+        columns << query.value(1).toString();
+    }
+    
+    if (!columns.contains("fare")) {
+        query.exec("ALTER TABLE bookings ADD COLUMN fare REAL NOT NULL DEFAULT 0.0");
+    }
+
+    if (!columns.contains("discount")) {
+        query.exec("ALTER TABLE bookings ADD COLUMN discount REAL NOT NULL DEFAULT 0.0");
+    }
+
+    if (!columns.contains("total_fare")) {
+        query.exec("ALTER TABLE bookings ADD COLUMN total_fare REAL NOT NULL DEFAULT 0.0");
+    }
+
+        
+    if (!columns.contains("passenger_name")) {
+        query.exec("ALTER TABLE bookings ADD COLUMN passenger_name TEXT NOT NULL DEFAULT ''");
+    }
+    
+    if (!columns.contains("distance")) {
+        query.exec("ALTER TABLE bookings ADD COLUMN distance REAL NOT NULL DEFAULT 0.0");
+    }                 
     
     // Add admin user if not exists
     query.prepare("INSERT OR IGNORE INTO users (username, password) "
