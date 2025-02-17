@@ -27,9 +27,9 @@ TicketDialog::TicketDialog(
     ui->dateValue->setText(date);
     ui->seatValue->setText(QString::number(seatNo));
     ui->distanceValue->setText(QString::number(distance) + " km");
-    ui->fareValue->setText("$" + QString::number(fare, 'f', 2));
+    ui->fareValue->setText("Tsh " + QString::number(fare, 'f', 2));
     ui->discountValue->setText(QString::number(discount, 'f', 2) + " %");
-    ui->totalFareValue->setText("$" + QString::number(totalFare, 'f', 2));
+    ui->totalFareValue->setText("Tsh " + QString::number(totalFare, 'f', 2));
     
     // Connect buttons
     connect(ui->printButton, &QPushButton::clicked,

@@ -63,12 +63,12 @@ void HistoryDialog::loadHistory()
                 new QTableWidgetItem(query.value("seat_no").toString()));
             ui->historyTable->setItem(row, 5, 
                 new QTableWidgetItem(query.value("distance").toString() + " km"));
-            ui->historyTable->setItem(row, 6, 
-                new QTableWidgetItem("$" + query.value("fare").toString()));
+            ui->historyTable->setItem(row, 6,
+                new QTableWidgetItem("Tsh " + query.value("fare").toString()));
             ui->historyTable->setItem(row, 7,
                 new QTableWidgetItem(query.value("discount").toString()));
             ui->historyTable->setItem(row, 8,
-                new QTableWidgetItem("$" + query.value("total_fare").toString()));
+                new QTableWidgetItem("Tsh " + query.value("total_fare").toString()));
         }
     } else {
         QMessageBox::critical(this, "Error", 
@@ -110,8 +110,9 @@ void HistoryDialog::onDeleteAllClicked()
                 "All booking history has been deleted");
             loadHistory();
         } else {
-            QMessageBox::critical(this, "Error", 
-                "Failed to delete history: " + query.lastError().text());
+            QMessageBox::critical(this, "Error",
+                "Failed to delete history: " + query.lastError().text()
+            );
         }
     }
 }

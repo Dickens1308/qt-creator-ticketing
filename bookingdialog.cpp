@@ -4,6 +4,7 @@
 #include <QMessageBox>
 #include <QSqlQuery>
 #include <QSqlError>
+#include <QSet> 
 
 BookingDialog::BookingDialog(QWidget *parent)
     : QDialog(parent)
@@ -32,22 +33,37 @@ void BookingDialog::setupConnections()
 
 void BookingDialog::loadLocations()
 {
-    QStringList locations = {"City A", "City B", "City C"};
+    QStringList locations = {"KIMARA TERMINAL", "UBUNGU TERMINAL", "KIVUKONI TERMINAL", "GEREZANI TERMINAL"};
     ui->sourceCombo->addItems(locations);
     ui->destCombo->addItems(locations);
 }
 
 int BookingDialog::getDistance(const QString &source, const QString &dest) const
 {
-    if((source == "City A" && dest == "City B") || 
-       (source == "City B" && dest == "City A"))
-        return 1000;
-    if((source == "City A" && dest == "City C") || 
-       (source == "City C" && dest == "City A"))
-        return 1500;
-    if((source == "City B" && dest == "City C") || 
-       (source == "City C" && dest == "City B"))
-        return 800;
+    if((source == "KIMARA TERMINAL" && dest == "UBUNGU TERMINAL") || 
+       (source == "UBUNGU TERMINAL" && dest == "KIMARA TERMINAL"))
+        return 150; // 150km distance
+
+    if((source == "KIMARA TERMINAL" && dest == "KIVUKONI TERMINAL") || 
+       (source == "KIVUKONI TERMINAL" && dest == "KIMARA TERMINAL"))
+        return 250; // 250km distance
+
+    if((source == "KIMARA TERMINAL" && dest == "GEREZANI TERMINAL") || 
+       (source == "GEREZANI TERMINAL" && dest == "KIMARA TERMINAL"))
+        return 300; // 300km distance
+
+    if((source == "UBUNGU TERMINAL" && dest == "KIVUKONI TERMINAL") || 
+       (source == "KIVUKONI TERMINAL" && dest == "UBUNGU TERMINAL"))
+        return 200; // 200km distance
+
+    if((source == "UBUNGU TERMINAL" && dest == "GEREZANI TERMINAL") || 
+       (source == "GEREZANI TERMINAL" && dest == "UBUNGU TERMINAL"))
+        return 250; // 250km distance
+
+    if((source == "KIVUKONI TERMINAL" && dest == "GEREZANI TERMINAL") || 
+       (source == "GEREZANI TERMINAL" && dest == "KIVUKONI TERMINAL"))
+        return 100; // 100km distance
+
     return 0;
 }
 
@@ -58,7 +74,7 @@ void BookingDialog::calculateFare()
     int distance = getDistance(source, dest);
     
     ui->distanceValue->setText(QString::number(distance) + " km");
-    double fare = 750.0 + (distance / 100.0);
+    double fare = 750.0 + (distance / 10.0);
     ui->fareValue->setText(QString::number(fare, 'f', 2));
     
     calculateTotalFare();
